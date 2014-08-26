@@ -1,14 +1,15 @@
 var auth = require('http-auth');
 var fs = require('fs');
 var read = require('read');
-var passwordHash = require('password-hash');
+var bcrypt = require('bcryptjs');
 
 
 var basic = auth.basic({
   realm: "Cozy Light"
   }, function (username, password, callback) {
-    callback(username === "me"
-             && passwordHash.verify(password, module.exports.hashedPassword));
+    bcrypt.compare(password, module.exports.hash, function(err, res) {
+      callback(username === "me" && res);
+    });
   }
 );
 
@@ -18,8 +19,8 @@ var setPassword = function() {
   var configPath = module.exports.configPath;
   var promptMsg = 'Set your new Password: ';
   read({ prompt: promptMsg, silent: true }, function(err, password) {
-    module.exports.hashedPassword = passwordHash.generate(password);
-    config.password = module.exports.hashedPassword;
+    var salt = bcrypt.genSaltSync(10);
+    module.exports.hash = bcrypt.hashSync(password, salt);
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
     console.log('Password properly stored');
   });
