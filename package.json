@@ -24,6 +24,7 @@
     "passport-local": "^1.0.0",
     "randomstring": "^1.0.3",
     "connect-flash": "^0.1.1",
-    "body-parser": "^1.6.5"
+    "body-parser": "^1.6.5",
+    "read": "^1.0.5"
   }
 }
